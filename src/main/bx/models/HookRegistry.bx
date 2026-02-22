@@ -1,0 +1,15 @@
+component {
+
+    function register( agentId, hooksMap ) {
+        // TODO: store hooks for this agent
+    }
+
+    function getHooksForAgent( agentId ) {
+        // TODO: return hooks or an empty struct
+    }
+
+    function clearAgentHooks( agentId ) {
+        // TODO: remove hooks for this agent
+    }
+
+}
