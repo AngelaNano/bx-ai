@@ -1,15 +1,24 @@
 component {
-
-    function register( agentId, hooksMap ) {
-        // TODO: store hooks for this agent
+    
+    property name="hookStore";
+    
+    function init(){
+        variables.hookStore = {};  // Stores agentId -> hooks map
+        return this;
     }
-
-    function getHooksForAgent( agentId ) {
-        // TODO: return hooks or an empty struct
+    
+    function register( required string agentId, required struct hooksMap ){
+        if( !structKeyExists( variables.hookStore, arguments.agentId ) ){
+            variables.hookStore[ arguments.agentId ] = {};
+        }
+        structAppend( variables.hookStore[ arguments.agentId ], arguments.hooksMap, true );
     }
-
-    function clearAgentHooks( agentId ) {
-        // TODO: remove hooks for this agent
+    
+    struct function getHooksForAgent( required string agentId ){
+        return variables.hookStore.getOrDefault( arguments.agentId, {} );
     }
-
+    
+    function clearAgentHooks( required string agentId ){
+        structDelete( variables.hookStore, arguments.agentId );
+    }
 }

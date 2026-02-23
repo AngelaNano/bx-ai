@@ -1,0 +1,31 @@
+/**
+ * HookExecutor - Fires agent lifecycle hooks safely
+ * Issue #108: Localized Agent Hooks Support
+ */
+component {
+    
+    property name="hookRegistry" inject="HookRegistry@ai";
+    
+    function fire( required string hookName, required struct context ) {
+        var agentId = context.agent.getAgentId();
+        var hooks = variables.hookRegistry.getHooksForAgent( agentId );
+        
+        if ( !hooks.keyExists( arguments.hookName ) ) {
+            return arguments.context;
+        }
+
+        try {
+            var hookFn = hooks[ arguments.hookName ];
+            arguments.context = hookFn( arguments.context );
+        } catch ( any e ) {
+            log.error( "Hook #arguments.hookName# failed for agent #agentId#: #e.message#" );
+            arguments.context.hasErrors = true;
+            arguments.context.error = {
+                "type" = e.type, 
+                "message" = e.message
+            };
+        }
+
+        return arguments.context;
+    }
+}

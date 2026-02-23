@@ -1,0 +1,29 @@
+
+```box
+component extends="testbox.system.BaseSpec"{
+    
+    function beforeAll(){
+        variables.registry = new HookRegistry();
+    }
+    
+    function run(){
+        describe( "HookRegistry", () => {
+            it( "stores agent hooks", () => {
+                registry.register( "agent1", { onAgentStart=function(){} } );
+                expect( registry.getHooksForAgent( "agent1" ).onAgentStart ).toBeDefined();
+            });
+            
+            it( "merges multiple registrations", () => {
+                registry.register( "agent1", { onToolCall=function(){} } );
+                var hooks = registry.getHooksForAgent( "agent1" );
+                expect( hooks.onAgentStart ).toBeDefined();
+                expect( hooks.onToolCall ).toBeDefined();
+            });
+            
+            it( "isolates different agents", () => {
+                registry.register( "agent2", { onToolResult=function(){} } );
+                expect( registry.getHooksForAgent( "agent1" ).onToolResult ).notToBeDefined();
+            });
+        });
+    }
+}
